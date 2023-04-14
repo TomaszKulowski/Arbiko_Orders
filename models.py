@@ -1,32 +1,33 @@
-from sqlalchemy import String, Integer, Date, Column, ForeignKey
-from sqlalchemy.orm import declarative_base, relationship
+from sqlalchemy import Integer, String, Date, create_engine, ForeignKey
+from sqlalchemy.orm import declarative_base, mapped_column, relationship
 
 Base = declarative_base()
-
-
-class Order(Base):
-    __tablename__ = 'orders'
-
-    id = Column(Integer, primary_key=True)
-    order_number = Column(Integer)
-    date = Column(Date)
-    products = relationship('Product', secondary='order_products', back_populates='orders')
+engine = create_engine('sqlite:///:memory:')
+Base.metadata.create_all(engine)
 
 
 class Product(Base):
     __tablename__ = 'products'
 
-    id = Column(Integer, primary_key=True)
-    catalog_number = Column(Integer)
-    oem_number = Column(String)
-    description = Column(String)
-    orders = relationship('Order', secondary='order_products', back_populates='products')
+    id = mapped_column(Integer, primary_key=True)
+    catalog_number = mapped_column(String)
+    oem_number = mapped_column(String)
+    description = mapped_column(String)
+    orders = relationship('Order', secondary='products_orders', back_populates='products')
 
 
-class OrderProduct(Base):
-    __tablename__ = 'order_products'
+class Order(Base):
+    __tablename__ = 'orders'
 
-    order_product_id = Column(Integer, primary_key=True)
-    order_id = Column(Integer, ForeignKey('orders.id'))
-    product_id = Column(Integer, ForeignKey('products.id'))
+    id = mapped_column(Integer, primary_key=True)
+    order_number = mapped_column(Integer)
+    date = mapped_column(Date)
+    products = relationship('Product', secondary='products_orders', back_populates='orders')
 
+
+class ProductOrder(Base):
+    __tablename__ = 'products_orders'
+
+    id = mapped_column(Integer, primary_key=True)
+    product_id = mapped_column(Integer, ForeignKey('products.id'))
+    order_id = mapped_column(Integer, ForeignKey('orders.id'))
