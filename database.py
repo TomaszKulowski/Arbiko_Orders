@@ -1,14 +1,12 @@
-from sqlalchemy import String, Integer, Date, JSON, Table, Column, create_engine, MetaData, text
+from sqlalchemy import create_engine, text
 from sqlalchemy.orm import Session
 
-from models import Order, Product, Base
 from protection import Protection
 
 
 class Database:
     def __init__(self, database_path):
         self.database_path = database_path
-        self.meta = MetaData()
         self.engine = create_engine(f'sqlite:///:memory:', future=True)
         self.session = None
 
@@ -48,5 +46,5 @@ class Database:
         for script in scripts:
             self.session.execute(text(script))
 
-    def search(self, phrase):
-        return self.session.query(Product).filter(Product.catalog_number.like(phrase)).all()
+    # def search(self, phrase):
+    #     return self.session.query(Product).filter(Product.catalog_number.like(phrase)).all()
