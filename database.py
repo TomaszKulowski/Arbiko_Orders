@@ -1,6 +1,7 @@
 from sqlalchemy import create_engine, text
 from sqlalchemy.orm import Session
 
+from models import Base
 from protection import Protection
 
 
@@ -45,6 +46,3 @@ class Database:
         scripts = content.split(';')
         for script in scripts:
             self.session.execute(text(script))
-
-    # def search(self, phrase):
-    #     return self.session.query(Product).filter(Product.catalog_number.like(phrase)).all()
