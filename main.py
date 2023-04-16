@@ -1,18 +1,16 @@
 import argparse
-from datetime import date, datetime, timedelta
+from datetime import date, timedelta
 from pathlib import Path
 import re
 
-from terminaltables import AsciiTable
 from rich.console import Console
 from rich.table import Table
 from sqlalchemy import desc
 
-from arbiko import load_data, load_data_fake_response
+from arbiko import load_data
 from database import Database
-from exceptions import DatabaseError
-from models import Orders, Products
-from protection import Protection
+from exceptions import DatabaseError, ExitException
+from models import Order, Product, OrderProduct
 
 database_path = Path('db.db')
 
@@ -31,34 +29,36 @@ def load_arguments():
     return args
 
 
-def get_data(start_date=None, end_date=None):
+def update_data(start_date=None, end_date=None):
     # set the default date to update database as 1 year
     if not start_date:
         start_date = date.today() - timedelta(days=365)
     if not end_date:
         end_date = date.today()
 
-    # response = load_data('2022-02-22', '2022-02-25')
-    # response = load_data(start_date, end_date)
-    response = load_data_fake_response()
-
+    response = load_data(start_date, end_date)
     for order_number, details in response.items():
-        products = 
-        order_date = details['date']
+        order = Order(
+            order_number=order_number,
+            date=details['date'],
+        )
+        database.session.add(order)
 
         for product in details['products']:
-            product_model = Products(
+            product_model = Product(
                 catalog_number=product['catalog_number'],
+                oem_number='',
                 description=product['description'],
             )
 
             filters = (
-                    (Products.catalog_number == product_model.catalog_number) &
-                    (Products.oem_number == product_model.oem_number) &
-                    (Products.description == product_model.description)
+                    (Product.catalog_number == product_model.catalog_number) &
+                    (Product.oem_number == product_model.oem_number) &
+                    (Product.description == product_model.description)
             )
 
-            result = database.session.query(Products).filter(filters).all()
+            # check if the product exist in database
+            result = database.session.query(Product).filter(filters).all()
             if len(result) == 1:
                 product_id = result[0].id
 
@@ -70,72 +70,79 @@ def get_data(start_date=None, end_date=None):
             else:
                 raise ValueError
 
-            products[product_id] = product['quantity']
+            product_order = OrderProduct(
+                order=order,
+                product_id=product_id,
+                quantity=product['quantity'],
+            )
+            database.session.add(product_order)
 
-        order = Orders(
-            order_number=order_number,
-            date=order_date,
-            products=products,
-        )
-        database.session.add(order)
         database.session.commit()
 
 
 def refresh_data():
     """The function gets the latest records from arbiko.pl."""
-    date_of_last_order = database.session.query(Orders).order_by(desc(Orders.date)).first()
+    date_of_last_order = database.session.query(Order).order_by(desc(Order.date)).first()
     if date_of_last_order:
-        get_data(start_date=date_of_last_order.date + timedelta(days=1))
+        update_data(start_date=date_of_last_order.date + timedelta(days=1))
     else:
         raise DatabaseError('It looks like the database is empty. First, try to update it.')
 
 
 def search():
-    phrase = None
-    while phrase != 'exit':
-        products = []
-        print()
-        print('To exit type "exit"')
-        print('Search by catalog number/oem number/description')
-        # phrases = input('Search: >>> ').strip().lower()
-        phrases = 'toner'
-        filters = (
-            Products.catalog_number,
-            Products.oem_number,
-            Products.description,
-        )
-        # todo to verify
-        catalog_number = re.compile('[1-9]+ [1-9]+').match(phrases)
-        if catalog_number:
-            phrases.replace(' ', '')
+    print()
+    print('To exit type "exit"')
+    print('Search by catalog number/oem number/description')
 
-        for filter in filters:
-            for phrase in phrases.split(' '):
-                products += database.session.query(Products).filter(filter.like(f'%{phrase}%')).all()
+    phrases = input('Search: >>> ').strip().lower()
+    result = []
 
-        # print(database.session.query(Orders).filter(Orders.products.contains('1') {'1': '2', '2': '2'}).all())
-        a = database.session.query(Orders).filter(Orders.products.contains({'1': '4', '2': '5'})).all()
-        for i in a:
-            print(i.order_number)
-        # a = database.session.query(Orders.products).all()
-        # print(a)
-        # for product in products:
-        #     order = database.session.query(Orders).filter(Orders.products['product_id'] == int(product.id)).all()
-        #     print(order)
-        phrase = 'exit'
+    if phrases == 'exit':
+        raise ExitException
+
+    filter_queries = (
+        Product.oem_number,
+        Product.description,
+    )
+
+    catalog_number = re.compile('[0-9]{8}|[0-9]{4} [0-9]{4}').match(phrases)
+    if catalog_number:
+        if ' ' not in phrases:
+            phrases = f'{phrases[:4]} {phrases[4:]}'
+
+        result += database.session.query(OrderProduct) \
+            .join(Product).join(Order) \
+            .filter(Product.catalog_number == phrases) \
+            .order_by(Order.date).all()
+
+        return result
+
+    for fq in filter_queries:
+        for phrase in phrases.split(' '):
+            result += database.session.query(OrderProduct) \
+                .join(Product).join(Order).filter(fq.like(f'%{phrase}%'))\
+                .order_by(Order.date).all()
+
+    return result
 
 
 def draw_table(records):
     console = Console()
-    table = Table(show_header=True, header_style="bold magenta", show_lines=True)
-    table.add_column("Order number")
-    table.add_column("Date")
-    table.add_column("Catalog num")
-    table.add_column("Description")
-    table.add_column("Amount", justify="right")
-    for record in records:
+    table = Table(show_header=True, header_style='bold magenta', show_lines=True)
+    table.add_column('Order number')
+    table.add_column('Date')
+    table.add_column('Catalog num')
+    table.add_column('Oem num')
+    table.add_column('Description')
+    table.add_column('Quantity', justify='right')
+    for order_product in records:
         table.add_row(
-            value[0], value[1], value[2], value[3], value[4]
+            str(order_product.order.order_number),
+            str(order_product.order.date),
+            str(order_product.product.catalog_number),
+            str(order_product.product.oem_number),
+            str(order_product.product.description),
+            str(order_product.quantity),
         )
 
     console.print(table)
@@ -152,7 +159,7 @@ if __name__ == '__main__':
 
         if args.update:
             try:
-                get_data(args.start_date, args.end_date)
+                update_data(args.start_date, args.end_date)
             except ValueError as error:
                 print(error)
 
@@ -163,5 +170,8 @@ if __name__ == '__main__':
                 print(error)
 
         if args.search:
-            search()
-            # draw_table(search())
+            try:
+                while True:
+                    draw_table(search())
+            except ExitException:
+                pass
