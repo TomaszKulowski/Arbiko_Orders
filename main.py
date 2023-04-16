@@ -7,9 +7,10 @@ from rich.console import Console
 from rich.table import Table
 from sqlalchemy import desc
 
-from arbiko import load_data
+from arbiko import Arbiko
+from credentials import login, password
 from database import Database
-from exceptions import DatabaseError, ExitException
+from exceptions import DatabaseError, ExitException, LoginError
 from models import Order, Product, OrderProduct
 
 database_path = Path('db.db')
@@ -36,8 +37,12 @@ def update_data(start_date=None, end_date=None):
     if not end_date:
         end_date = date.today()
 
-    response = load_data(start_date, end_date)
-    for order_number, details in response.items():
+    arbiko = Arbiko(login, password)
+    if not arbiko.login():
+        raise LoginError('Login error')
+    order_history = arbiko.get_order_history(start_date, end_date)
+
+    for order_number, details in order_history.items():
         order = Order(
             order_number=order_number,
             date=details['date'],
@@ -47,7 +52,7 @@ def update_data(start_date=None, end_date=None):
         for product in details['products']:
             product_model = Product(
                 catalog_number=product['catalog_number'],
-                oem_number='',
+                oem_number=product['oem_number'],
                 description=product['description'],
             )
 
@@ -89,9 +94,12 @@ def refresh_data():
         raise DatabaseError('It looks like the database is empty. First, try to update it.')
 
 
+def sort_result(value):
+    return value.order.date
+
+
 def search():
-    print()
-    print('To exit type "exit"')
+    print('\nTo exit type "exit"')
     print('Search by catalog number/oem number/description')
 
     phrases = input('Search: >>> ').strip().lower()
@@ -122,7 +130,7 @@ def search():
             result += database.session.query(OrderProduct) \
                 .join(Product).join(Order).filter(fq.like(f'%{phrase}%'))\
                 .order_by(Order.date).all()
-
+    result.sort(key=sort_result)
     return result
 
 
@@ -161,6 +169,8 @@ if __name__ == '__main__':
             try:
                 update_data(args.start_date, args.end_date)
             except ValueError as error:
+                print(error)
+            except LoginError as error:
                 print(error)
 
         if args.refresh:
