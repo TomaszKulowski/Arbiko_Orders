@@ -1,3 +1,4 @@
+"""The app to manage the placed orders at arbiko.pl site."""
 import argparse
 from datetime import date, timedelta
 from pathlib import Path
@@ -16,6 +17,11 @@ from models import Order, Product, OrderProduct
 
 
 def load_arguments():
+    """The function init arguments.
+
+    Returns:
+        args: parsed arguments
+    """
     parser = argparse.ArgumentParser()
     group = parser.add_mutually_exclusive_group()
     group.add_argument('-r', '--refresh', help='refresh the database', action='store_true')
@@ -29,7 +35,13 @@ def load_arguments():
     return args
 
 
-def update_data(start_date=None, end_date=None):
+def update_data(start_date: str = None, end_date: str = None):
+    """The function to update order history in database.
+
+    Args:
+        start_date (str): start date to get order history
+        end_date (str): end date to get order history
+    """
     # set the default date to update database as 1 year
     if not start_date:
         start_date = date.today() - timedelta(days=365)
@@ -83,7 +95,7 @@ def update_data(start_date=None, end_date=None):
 
 
 def refresh_data():
-    """The function gets the latest records from arbiko.pl."""
+    """The function gets the new records from arbiko.pl."""
     date_of_last_order = database.session.query(Order).order_by(desc(Order.date)).first()
     if date_of_last_order:
         update_data(start_date=date_of_last_order.date + timedelta(days=1))
@@ -91,11 +103,17 @@ def refresh_data():
         raise DatabaseError('It looks like the database is empty. First, try to update it.')
 
 
-def sort_result(value):
+def _sort_result(value):
+    """The function to sort record"""
     return value.order.date
 
 
-def search():
+def search() -> list:
+    """The function gets a phrase and searches for it in the database.
+
+    Returns:
+        result(list): with serched data
+    """
     print('\nTo exit type "exit"')
     print('Search by catalog number/oem number/description')
 
@@ -127,11 +145,13 @@ def search():
             result += database.session.query(OrderProduct) \
                 .join(Product).join(Order).filter(fq.like(f'%{phrase}%'))\
                 .order_by(Order.date).all()
-    result.sort(key=sort_result)
+    result.sort(key=_sort_result)
+
     return result
 
 
-def draw_table(records):
+def draw_table(records: list):
+    """The function draw the table with passed data"""
     console = Console()
     table = Table(show_header=True, header_style='bold magenta', show_lines=True)
     table.add_column('Order number')
