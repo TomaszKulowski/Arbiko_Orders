@@ -3,6 +3,7 @@ from datetime import date, timedelta
 from pathlib import Path
 import re
 
+from fake_useragent import UserAgent
 from rich.console import Console
 from rich.table import Table
 from sqlalchemy import desc
@@ -12,8 +13,6 @@ from credentials import login, password
 from database import Database
 from exceptions import DatabaseError, ExitException, LoginError
 from models import Order, Product, OrderProduct
-
-database_path = Path('db.db')
 
 
 def load_arguments():
@@ -37,7 +36,7 @@ def update_data(start_date=None, end_date=None):
     if not end_date:
         end_date = date.today()
 
-    arbiko = Arbiko(login, password)
+    arbiko = Arbiko(login, password, user_agent)
     if not arbiko.login():
         raise LoginError('Login error')
     order_history = arbiko.get_order_history(start_date, end_date)
@@ -157,6 +156,9 @@ def draw_table(records):
 
 
 if __name__ == '__main__':
+    database_path = Path('db.db')
+    user_agent = UserAgent().chrome
+
     args = load_arguments()
 
     with Database(database_path) as database:
