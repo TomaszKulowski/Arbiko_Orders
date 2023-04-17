@@ -1,3 +1,4 @@
+"""The collections of the models to use in sqlachemy ORM."""
 from sqlalchemy import Integer, String, Date, ForeignKey
 from sqlalchemy.orm import declarative_base, mapped_column, relationship
 
@@ -5,6 +6,7 @@ Base = declarative_base()
 
 
 class Product(Base):
+    """Model to manage products table."""
     __tablename__ = 'products'
 
     id = mapped_column(Integer, primary_key=True)
@@ -15,6 +17,7 @@ class Product(Base):
 
 
 class Order(Base):
+    """Model to manage orders table."""
     __tablename__ = 'orders'
 
     id = mapped_column(Integer, primary_key=True)
@@ -24,7 +27,8 @@ class Order(Base):
 
 
 class OrderProduct(Base):
-    __tablename__ = 'products_orders'
+    """Model to associate table orders and products."""
+    __tablename__ = 'orders_products'
 
     id = mapped_column(Integer, primary_key=True)
     order_id = mapped_column(Integer, ForeignKey('orders.id'))
