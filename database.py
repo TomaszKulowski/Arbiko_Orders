@@ -18,10 +18,6 @@ class Database:
     def __exit__(self, exc_type, exc_val, exc_tb):
         Protection(self.database_path).save_database_dump(self.dump())
 
-    def add_new_records(self, models: list):
-        self.session.add_all(models)
-        self.session.commit()
-
     def create_database(self):
         if self.database_path.exists():
             raise FileExistsError
