@@ -3,6 +3,8 @@ from requests import Session
 
 from bs4 import BeautifulSoup
 
+from exceptions import LoginError
+
 
 class Arbiko:
     def __init__(self, username, password, user_agent):
@@ -14,6 +16,14 @@ class Arbiko:
 
         self.session = None
         self.user_agent = user_agent
+
+    def __enter__(self):
+        if not self.login():
+            raise LoginError
+        return self
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        pass
 
     def _set_headers(self):
         self.headers = {

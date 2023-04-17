@@ -36,10 +36,8 @@ def update_data(start_date=None, end_date=None):
     if not end_date:
         end_date = date.today()
 
-    arbiko = Arbiko(login, password, user_agent)
-    if not arbiko.login():
-        raise LoginError('Login error')
-    order_history = arbiko.get_order_history(start_date, end_date)
+    with Arbiko(login, password, user_agent) as arbiko:
+        order_history = arbiko.get_order_history(start_date, end_date)
 
     for order_number, details in order_history.items():
         order = Order(
