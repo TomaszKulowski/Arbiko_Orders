@@ -53,8 +53,8 @@ class Arbiko:
         """The method try to login at aribko.pl.
 
         Returns:
-            True(bool): if login was correct
-            False(bool): if login was incorrectly."""
+            True (bool): if login was correct
+            False (bool): if login was incorrectly."""
         login_payload = {
             'user': self.username,
             'passwd': self.password,
@@ -79,7 +79,7 @@ class Arbiko:
             end_date (str): end date to get order history
 
         Returns:
-            result(dict): fetched data
+            result (dict): fetched data
         """
         history_payload = {
             'filters': 'data_od,data_do,numer,stan',
