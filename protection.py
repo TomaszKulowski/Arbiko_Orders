@@ -9,8 +9,8 @@ from cryptography.hazmat.backends import default_backend
 
 
 class Protection:
-    def __init__(self, name):
-        self.password = b'password'
+    def __init__(self, password, name):
+        self.password = bytes(password)
         self.name = name
 
     def key_creation(self) -> cryptography.fernet.Fernet:

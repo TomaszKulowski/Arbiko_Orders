@@ -2,6 +2,7 @@
 from sqlalchemy import create_engine, text
 from sqlalchemy.orm import Session
 
+from credentials import database_password
 from models import Base
 from protection import Protection
 
@@ -26,7 +27,7 @@ class Database:
         return self
 
     def __exit__(self, exc_type, exc_val, exc_tb):
-        Protection(self.database_path).save_database_dump(self.dump())
+        Protection(database_password, self.database_path).save_database_dump(self.dump())
 
     def create_database(self):
         """Create the database if not exists."""
