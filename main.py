@@ -112,7 +112,7 @@ def search() -> list:
     """The function gets a phrase and searches for it in the database.
 
     Returns:
-        result (list): with serched data
+        result (list): with searched data
     """
     print('\nTo exit type "exit"')
     print('Search by catalog number/oem number/description')
