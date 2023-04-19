@@ -9,11 +9,11 @@ from rich.console import Console
 from rich.table import Table
 from sqlalchemy import desc
 
-from arbiko import Arbiko
+from tools.arbiko import Arbiko
 from credentials import login, password
-from database import Database
-from exceptions import DatabaseError, ExitException, LoginError
-from models import Order, Product, OrderProduct
+from tools.database import Database
+from tools.exceptions import DatabaseError, ExitException, LoginError
+from tools.models import Order, Product, OrderProduct
 
 
 def load_arguments():
