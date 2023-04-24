@@ -1,6 +1,8 @@
 """The collections of tools to manage the database."""
+from pathlib import Path
 from sqlalchemy import create_engine, text
 from sqlalchemy.orm import Session
+from typing import Type
 
 from credentials import database_password
 from tools.models import Base
@@ -16,8 +18,12 @@ class Database:
          dump(): dump the data from the database and return as bytes
          load(): load the data from the protected file and load it to database
     """
-    def __init__(self, database_path: object):
-        """Construct all the necessary attributes for the database object."""
+    def __init__(self, database_path: Type[Path]):
+        """Construct all the necessary attributes for the database object.
+
+        Args:
+            database_path (Type[Path]): database path
+        """
         self.database_path = database_path
         self.engine = create_engine(f'sqlite:///:memory:', future=True)
         self.session = None
