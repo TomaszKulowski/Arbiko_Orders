@@ -10,7 +10,6 @@ from rich.table import Table
 from sqlalchemy import desc
 import yaml
 
-from credentials import login, password
 from tools.arbiko import Arbiko
 from tools.database import Database
 from tools.exceptions import DatabaseError, ExitException, LoginError
@@ -202,7 +201,7 @@ if __name__ == '__main__':
 
         if args.update:
             try:
-                update_data(login, password, args.start_date, args.end_date)
+                update_data(login, arbiko_password, args.start_date, args.end_date)
             except ValueError as error:
                 print(error)
             except LoginError as error:
@@ -210,7 +209,7 @@ if __name__ == '__main__':
 
         if args.refresh:
             try:
-                refresh_data(login, password)
+                refresh_data(login, database_password)
             except DatabaseError as error:
                 print(error)
 
