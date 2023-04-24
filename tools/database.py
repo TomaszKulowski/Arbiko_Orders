@@ -4,9 +4,8 @@ from sqlalchemy import create_engine, text
 from sqlalchemy.orm import Session
 from typing import Type
 
-from credentials import database_password
-from models import Base
-from protection import Protection
+from tools.models import Base
+from tools.protection import Protection
 
 
 class Database:
@@ -18,15 +17,16 @@ class Database:
          dump(): dump the data from the database and return as bytes
          load(): load the data from the protected file and load it to database
     """
-    def __init__(self, database_path: Type[Path]):
+    def __init__(self, database_path: Type[Path], password: str):
         """Construct all the necessary attributes for the database object.
 
         Args:
             database_path (Type[Path]): database path
-
+            password (str): database password
         """
         self.database_path = database_path
         self.engine = create_engine(f'sqlite:///:memory:', future=True)
+        self.password = password
         self.session = None
 
     def __enter__(self):
@@ -34,7 +34,7 @@ class Database:
         return self
 
     def __exit__(self, exc_type, exc_val, exc_tb):
-        Protection(database_password, self.database_path).save_database_dump(self.dump())
+        Protection(self.password, self.database_path).save_database_dump(self.dump())
 
     def create_database(self):
         """Create the database if not exists."""

@@ -8,8 +8,8 @@ from fake_useragent import UserAgent
 from rich.console import Console
 from rich.table import Table
 from sqlalchemy import desc
+import yaml
 
-from credentials import login, password
 from tools.arbiko import Arbiko
 from tools.database import Database
 from tools.exceptions import DatabaseError, ExitException, LoginError
@@ -35,10 +35,12 @@ def load_arguments():
     return args
 
 
-def update_data(start_date: str = None, end_date: str = None):
+def update_data(login: str, password: str, start_date: str = None, end_date: str = None):
     """The function to update order history in database.
 
     Args:
+        login (str): login to the aribko.pl
+        password (str): password to the aribko.pl
         start_date (str): start date to get order history
         end_date (str): end date to get order history
     """
@@ -94,11 +96,20 @@ def update_data(start_date: str = None, end_date: str = None):
         database.session.commit()
 
 
-def refresh_data():
-    """The function gets the new records from arbiko.pl."""
+def refresh_data(login: str, password: str):
+    """The function gets the new records from arbiko.pl.
+
+    Args:
+        login (str): login to the aribko.pl
+        password (str): password to the arbiko.pl
+        """
     date_of_last_order = database.session.query(Order).order_by(desc(Order.date)).first()
     if date_of_last_order:
-        update_data(start_date=date_of_last_order.date + timedelta(days=1))
+        update_data(
+            login=login,
+            password=password,
+            start_date=date_of_last_order.date + timedelta(days=1)
+        )
     else:
         raise DatabaseError('It looks like the database is empty. First, try to update it.')
 
@@ -174,12 +185,15 @@ def draw_table(records: list):
 
 
 if __name__ == '__main__':
-    database_path = Path('db.db')
-    user_agent = UserAgent().chrome
+    with open('settings.yaml') as file:
+        settings = yaml.safe_load(file)
 
+    database_path = Path(settings['database_path'])
+    login, arbiko_password, database_password = Path(settings['credentials'])
+    user_agent = UserAgent().chrome
     args = load_arguments()
 
-    with Database(database_path) as database:
+    with Database(database_path, database_password) as database:
         if not database_path.exists():
             database.create_database()
         else:
@@ -187,7 +201,7 @@ if __name__ == '__main__':
 
         if args.update:
             try:
-                update_data(args.start_date, args.end_date)
+                update_data(login, arbiko_password, args.start_date, args.end_date)
             except ValueError as error:
                 print(error)
             except LoginError as error:
@@ -195,7 +209,7 @@ if __name__ == '__main__':
 
         if args.refresh:
             try:
-                refresh_data()
+                refresh_data(login, database_password)
             except DatabaseError as error:
                 print(error)
 
