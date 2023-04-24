@@ -10,8 +10,8 @@ from rich.table import Table
 from sqlalchemy import desc
 import yaml
 
-from tools.arbiko import Arbiko
 from credentials import login, password
+from tools.arbiko import Arbiko
 from tools.database import Database
 from tools.exceptions import DatabaseError, ExitException, LoginError
 from tools.models import Order, Product, OrderProduct

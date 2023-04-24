@@ -1,6 +1,8 @@
 """The collections of the tools to encrypt and decrypt the database file."""
 import base64
 import gzip
+from pathlib import Path
+from typing import Type
 
 import cryptography.fernet
 from cryptography.fernet import Fernet
@@ -19,15 +21,15 @@ class Protection:
         decrypt_file(): decrypt database file and return content
         save_database_dump(database_dump: str): encrypt database dump and save to the file
     """
-    def __init__(self, password: str, name: str):
+    def __init__(self, password: str, database_path: Type[Path]):
         """Construct all the necessary attributes for the protection object.
 
         Args:
             password (str): database password
-            name (str): database name
+            database_path (Type[Path]): database name
         """
         self.password = bytes(password)
-        self.name = name
+        self.database_path = database_path
 
     def key_creation(self) -> cryptography.fernet.Fernet:
         """Create the key for the encryption.
@@ -78,7 +80,7 @@ class Protection:
         Returns:
             (str): database content
         """
-        file = gzip.open(self.name.name, 'rb')
+        file = gzip.open(self.database_path, 'rb')
         data = file.read()
         file.close()
 
@@ -91,6 +93,6 @@ class Protection:
         """Encrypt and save to the file passed database dump."""
         encrypted_data = self.encrypt(database_dump)
 
-        file = gzip.open(self.name, 'wb')
+        file = gzip.open(self.database_path, 'wb')
         file.write(encrypted_data)
         file.close()
