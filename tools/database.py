@@ -3,8 +3,8 @@ from sqlalchemy import create_engine, text
 from sqlalchemy.orm import Session
 
 from credentials import database_password
-from models import Base
-from protection import Protection
+from tools.models import Base
+from tools.protection import Protection
 
 
 class Database:

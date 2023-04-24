@@ -4,7 +4,7 @@ from requests import Session
 
 from bs4 import BeautifulSoup
 
-from exceptions import LoginError
+from tools.exceptions import LoginError
 
 
 class Arbiko:
