@@ -60,7 +60,7 @@ class Database:
 
     def load(self):
         """Load the data from the protected file and load it to database."""
-        content = Protection(self.database_path).decrypt_file()
+        content = Protection(self.password, self.database_path).decrypt_file()
         scripts = content.split(';')
         for script in scripts:
             self.session.execute(text(script))
