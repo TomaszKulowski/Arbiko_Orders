@@ -28,7 +28,7 @@ class Protection:
             password (str): database password
             database_path (Type[Path]): database name
         """
-        self.password = bytes(password)
+        self.password = bytes(password, 'utf-8')
         self.database_path = database_path
 
     def key_creation(self) -> cryptography.fernet.Fernet:
