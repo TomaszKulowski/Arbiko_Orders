@@ -189,7 +189,9 @@ if __name__ == '__main__':
         settings = yaml.safe_load(file)
 
     database_path = Path(settings['database_path'])
-    login, arbiko_password, database_password = Path(settings['credentials'])
+    login = Path(settings['credentials']['arbiko_login'])
+    arbiko_password = Path(settings['credentials']['arbiko_password'])
+    database_password = Path(settings['credentials']['database_password'])
     user_agent = UserAgent().chrome
     args = load_arguments()
 
