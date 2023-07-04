@@ -1,0 +1,245 @@
+<html>
+<head>
+<title>ARBIKO</title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-2">
+<link rel="stylesheet" href="styles.css" type="text/css">
+<script src=script.js></script>
+        <script>
+<!--
+loading=open('loading.html', 'loading', 'menu=0, width=200, height=30, top=300, left=300,resizable=no,scrollbars=no');
+
+//-->
+</script>
+        <script language="javascript" type="text/javascript">
+<!--
+
+/*
+Image w/ description tooltip- By Dynamic Web Coding (www.dyn-web.com)
+Copyright 2002 by Sharon Paine
+Visit http://www.dynamicdrive.com for this script
+*/
+
+/* IMPORTANT: Put script after tooltip div or
+         put tooltip div just before </BODY>. */
+
+var dom = (document.getElementById) ? true : false;
+var ns5 = ((navigator.userAgent.indexOf("Gecko")>-1) && dom) ? true: false;
+var ie5 = ((navigator.userAgent.indexOf("MSIE")>-1) && dom) ? true : false;
+var ns4 = (document.layers && !dom) ? true : false;
+var ie4 = (document.all && !dom) ? true : false;
+var nodyn = (!ns5 && !ns4 && !ie4 && !ie5) ? true : false;
+
+// resize fix for ns4
+var origWidth, origHeight;
+if (ns4) {
+        origWidth = window.innerWidth; origHeight = window.innerHeight;
+        window.onresize = function() { if (window.innerWidth != origWidth || window.innerHeight != origHeight) history.go(0); }
+}
+
+// avoid error of passing event object in older browsers
+if (nodyn) { event = "nope" }
+
+///////////////////////  CUSTOMIZE HERE   ////////////////////
+// settings for tooltip
+// Do you want tip to move when mouse moves over link?
+var tipFollowMouse= true;
+// Be sure to set tipWidth wide enough for widest image
+var tipWidth= 270;
+var offX= 20;   // how far from mouse to show tip
+var offY= -100;
+var tipFontFamily= "Verdana, arial, helvetica, sans-serif";
+var tipFontSize= "8pt";
+// set default text color and background color for tooltip here
+// individual tooltips can have their own (set in messages arrays)
+// but don't have to
+var tipFontColor= "#000000";
+var tipBgColor= "#cccccc";
+var tipBorderColor= "#000080";
+var tipBorderWidth= 1;
+var tipBorderStyle= "ridge";
+var tipPadding= 4;
+
+// tooltip content goes here (image, description, optional bgColor, optional textcolor)
+var messages = new Array();
+// multi-dimensional arrays containing:
+// image and text for tooltip
+// optional: bgColor and color to be sent to tooltip
+messages[0] = new Array('images/pytajnik.gif','Najpierw wybierz typ sprzêtu, do którego szukasz czê¶ci. Je¶li szukasz akcesoriów uniwersalnych, wybierz typ Akcesoria.',"#fafafa");
+messages[1] = new Array('images/pytajnik.gif','W drugim kroku wybierz producenta sprzêtu, do którego szukasz czê¶ci. Po wybraniu producenta strona siê prze³aduje i uka¿e siê lista modeli maszyn danego producenta.',"#fafafa");       
+messages[2] = new Array('images/pytajnik.gif','W trzecim i ostatnim kroku wybierz model i/lub grupê produktów. Wybranie obu tych opcji spowoduje skrócenie listy wyników i w rezultacie przyspieszy, w wiêkszo¶ci przypadków, wy¶wietlen
+ie rezultatu wyszukiwania. Je¶li chcesz, mo¿esz wybraæ wiêcej ni¿ jeden model lub grupê. Wybieraj je wtedy przy naci¶niêtym klawiszu Ctrl.','#fafafa');
+messages[3] = new Array('images/pytajnik.gif','Wybierz grupê akcesoriów. To jest ostatnie kryterium wyboru w przypadku wyszukiwania akcesoriów.','#fafafa');
+////////////////////  END OF CUSTOMIZATION AREA  ///////////////////
+
+// preload images that are to appear in tooltip
+// from arrays above
+if (document.images) {
+        var theImgs = new Array();
+        for (var i=0; i<messages.length; i++) {
+        theImgs[i] = new Image();
+                theImgs[i].src = messages[i][0];
+  }
+}
+
+// to layout image and text, 2-row table, image centered in top cell
+// these go in var tip in doTooltip function
+// startStr goes before image, midStr goes between image and text
+var startStr = '<table width="' + tipWidth + '"><tr><td align="center" width="100%"><img src="';
+var midStr = '" border="0"></td></tr><tr><td valign="top">';
+var endStr = '</td></tr></table>';
+
+////////////////////////////////////////////////////////////
+//  initTip     - initialization for tooltip.
+//              Global variables for tooltip.
+//              Set styles for all but ns4.
+//              Set up mousemove capture if tipFollowMouse set true.
+////////////////////////////////////////////////////////////
+var tooltip, tipcss;
+function initTip() {
+        if (nodyn) return;
+        tooltip = (ns4)? document.tipDiv.document: (ie4)? document.all['tipDiv']: (ie5||ns5)? document.getElementById('tipDiv'): null;
+        tipcss = (ns4)? document.tipDiv: tooltip.style;
+        if (ie4||ie5||ns5) {    // ns4 would lose all this on rewrites
+                tipcss.width = tipWidth+"px";
+                tipcss.fontFamily = tipFontFamily;
+                tipcss.fontSize = tipFontSize;
+                tipcss.color = tipFontColor;
+                tipcss.backgroundColor = tipBgColor;
+                tipcss.borderColor = tipBorderColor;
+                tipcss.borderWidth = tipBorderWidth+"px";
+                tipcss.padding = tipPadding+"px";
+                tipcss.borderStyle = tipBorderStyle;
+        }
+        if (tooltip&&tipFollowMouse) {
+                if (ns4) document.captureEvents(Event.MOUSEMOVE);
+                document.onmousemove = trackMouse;
+        }
+}
+
+window.onload = initTip;
+
+/////////////////////////////////////////////////
+//  doTooltip function
+//                      Assembles content for tooltip and writes
+//                      it to tipDiv
+/////////////////////////////////////////////////
+var t1,t2;      // for setTimeouts
+var tipOn = false;      // check if over tooltip link
+function doTooltip(evt,num) {
+        if (!tooltip) return;
+        if (t1) clearTimeout(t1);       if (t2) clearTimeout(t2);
+        tipOn = true;
+        // set colors if included in messages array
+        if (messages[num][2])   var curBgColor = messages[num][2];
+        else curBgColor = tipBgColor;
+        if (messages[num][3])   var curFontColor = messages[num][3];
+        else curFontColor = tipFontColor;
+        if (ns4) {
+                var tip = '<table bgcolor="' + tipBorderColor + '" width="' + tipWidth + '" cellspacing="0" cellpadding="' + tipBorderWidth + '" border="0"><tr><td><table bgcolor="' + curBgColor + '" width="100%" cellspacing="0" cel
+lpadding="' + tipPadding + '" border="0"><tr><td>'+ startStr + messages[num][0] + midStr + '<span style="font-family:' + tipFontFamily + '; font-size:' + tipFontSize + '; color:' + curFontColor + ';">' + messages[num][1] + '</span>'
+ + endStr + '</td></tr></table></td></tr></table>';
+                tooltip.write(tip);
+                tooltip.close();
+        } else if (ie4||ie5||ns5) {
+                var tip = startStr + messages[num][0] + midStr + '<span style="font-family:' + tipFontFamily + '; font-size:' + tipFontSize + '; color:' + curFontColor + ';">' + messages[num][1] + '</span>' + endStr;
+                tipcss.backgroundColor = curBgColor;
+                tooltip.innerHTML = tip;
+        }
+        if (!tipFollowMouse) positionTip(evt);
+        else t1=setTimeout("tipcss.visibility='visible'",100);
+}
+
+var mouseX, mouseY;
+function trackMouse(evt) {
+        mouseX = (ns4||ns5)? evt.pageX: window.event.clientX + document.body.scrollLeft;
+        mouseY = (ns4||ns5)? evt.pageY: window.event.clientY + document.body.scrollTop;
+        if (tipOn) positionTip(evt);
+}
+
+/////////////////////////////////////////////////////////////
+//  positionTip function
+//              If tipFollowMouse set false, so trackMouse function
+//              not being used, get position of mouseover event.
+//              Calculations use mouseover event position,
+//              offset amounts and tooltip width to position
+//              tooltip within window.
+/////////////////////////////////////////////////////////////
+function positionTip(evt) {
+        if (!tipFollowMouse) {
+                mouseX = (ns4||ns5)? evt.pageX: window.event.clientX + document.body.scrollLeft;
+                mouseY = (ns4||ns5)? evt.pageY: window.event.clientY + document.body.scrollTop;
+        }
+        // tooltip width and height
+        var tpWd = (ns4)? tooltip.width: (ie4||ie5)? tooltip.clientWidth: tooltip.offsetWidth;
+        var tpHt = (ns4)? tooltip.height: (ie4||ie5)? tooltip.clientHeight: tooltip.offsetHeight;
+        // document area in view (subtract scrollbar width for ns)
+        var winWd = (ns4||ns5)? window.innerWidth-20+window.pageXOffset: document.body.clientWidth+document.body.scrollLeft;
+        var winHt = (ns4||ns5)? window.innerHeight-20+window.pageYOffset: document.body.clientHeight+document.body.scrollTop;
+        // check mouse position against tip and window dimensions
+        // and position the tooltip
+        if ((mouseX+offX+tpWd)>winWd)
+                tipcss.left = (ns4)? mouseX-(tpWd+offX): mouseX-(tpWd+offX)+"px";
+        else tipcss.left = (ns4)? mouseX+offX: mouseX+offX+"px";
+        if ((mouseY+offY+tpHt)>winHt)
+                tipcss.top = (ns4)? winHt-(tpHt+offY): winHt-(tpHt+offY)+"px";
+        else tipcss.top = (ns4)? mouseY+offY: mouseY+offY+"px";
+        if (!tipFollowMouse) t1=setTimeout("tipcss.visibility='visible'",100);
+}
+
+function hideTip() {
+        if (!tooltip) return;
+        t2=setTimeout("tipcss.visibility='hidden'",100);
+        tipOn = false;
+}
+
+//-->
+</script>
+</head>
+
+<body bgcolor="#FFFFFF" text="#000000" leftmargin="0" topmargin="0" marginwidth="0" marginheight="0">
+        <script>
+<!--
+
+function zamknij() {
+  loading.close();
+};
+onload=zamknij;
+
+//-->
+</script>
+        <span class=szarynm> &nbsp;&nbsp;&nbsp;Jeste¶ zalogowany jako <b>
+        nazwa firmy</b> &#149; Podane poni¿ej ceny uwzglêdniaj±  Twój rabat w naszym sklepie.
+
+        </span>
+
+<table width="100%" border="0" cellspacing="0" cellpadding="0">
+  <tr>
+    <td bgcolor="#999999" height="1"></td>
+  </tr>
+  <tr>
+    <td class="tit" bgcolor="#f5f5f5"><b><font color="#003366">&nbsp;&nbsp;<img src="images/znacznik.gif" width="6" height="6" align="absmiddle">
+      Oferta produktów</font></b></td>
+  </tr>
+  <tr>
+    <td bgcolor="#999999" height="1"></td>
+  </tr>
+</table>
+
+
+<table width="100%" border="0" cellspacing="0" cellpadding="0" background="images/naglowektlo.gif">
+  <tr >
+    <td width="550" background="images/naglowektlo.gif"><img src="images/naglowek2.gif" width="550" height="40" usemap="#Map" border="0"><b></b></td>
+    <td></td>
+  </tr>
+</table>
+<br>
+<style>.s{ background-image:url(pricex.gif);background-position: left;background-repeat: no-repeat;}</style><p class=margin>Je¶li chcesz dodaæ towar do koszyka, wpisz ilo¶æ przy ¿±danym towarze i kliknij dowoln± ikonkê koszyka. Mo¿e
+sz równie¿ dodaæ wiele towarów z wy¶wietlonej listy.<br><a href="exportpdf.php" target=_blank>Pobierz wy¶wietlony cennik w formacie PDF</a><br><br>
+<br>
+<map name="Map">
+  <area shape="rect" coords="90,12,213,30" href="fram_content.php3">
+
+</map>
+<div id="tipDiv" style="position:absolute; visibility:hidden; z-index:100"></div>
+</body>
+</html>
