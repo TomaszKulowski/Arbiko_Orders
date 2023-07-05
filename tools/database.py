@@ -17,11 +17,11 @@ class Database:
          dump(): dump the data from the database and return as bytes
          load(): load the data from the protected file and load it to database
     """
-    def __init__(self, database_path: Type[Path], password: str):
+    def __init__(self, database_path: Path, password: str):
         """Construct all the necessary attributes for the database object.
 
         Args:
-            database_path (Type[Path]): database path
+            database_path (Path): database path
             password (str): database password
         """
         self.database_path = database_path
