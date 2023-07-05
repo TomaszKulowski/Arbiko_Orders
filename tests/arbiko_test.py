@@ -1,4 +1,4 @@
-"""The collections of the test for the arbiko.py module."""
+"""The collections of the tests for the tools/arbiko.py module."""
 from dataclasses import dataclass
 from datetime import datetime
 from json import load
@@ -76,7 +76,7 @@ def test_login_if_use_as_context_manager_correct_pass(mock_login, no_requests):
 
     Args:
         mock_login: the patched 'login' method of the Arbiko class
-        no_requests: fixutre for mocking HTTP requests
+        no_requests: fixture for mocking HTTP requests
     """
     with Arbiko('login', 'correct_password', 'user_agent') as arbiko:
         pass
