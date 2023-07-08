@@ -126,7 +126,7 @@ def test_parse_server_responses(mock_get_oem_number):
     """
     headers = {'set-cookie': 'logged=yes'}
     responses.add(responses.POST, ArbikoUrls.login_url, adding_headers=headers)
-    with open('tests/expected_response_post_history_url.txt') as file:
+    with open('tests/responses/expected_response_post_history_url.txt') as file:
         expected_response = file.read()
     responses.add(
         responses.POST,
@@ -134,14 +134,14 @@ def test_parse_server_responses(mock_get_oem_number):
         headers=headers,
         body=expected_response,
     )
-    with open('tests/expected_response_get_order_url.txt') as file:
+    with open('tests/responses/expected_response_get_order_url.txt') as file:
         expected_response = file.read()
     responses.add(responses.GET, ArbikoUrls.order_url, body=expected_response)
 
     with Arbiko('login', 'correct_password', 'user_agent') as arbiko:
         response = arbiko.get_order_history('2013-11-29', '2013-11-29')
 
-    with open('tests/expected_result_get_order_history.json') as file:
+    with open('tests/responses/expected_result_get_order_history.json') as file:
         expected_result = load(file)
 
     expected_result['215044']['date'] = datetime(2014, 3, 24)
@@ -169,9 +169,9 @@ def test_get_oem_number(catalog_number, expected_result, capsys):
     headers = {'set-cookie': 'logged=yes'}
     responses.add(responses.POST, ArbikoUrls.login_url, headers=headers)
     if expected_result != '???? ????':
-        input_file = Path('tests/expected_good_response_post_search_url.txt')
+        input_file = Path('tests/responses/expected_good_response_post_search_url.txt')
     else:
-        input_file = Path('tests/expected_wrong_response_post_search_url.txt')
+        input_file = Path('tests/responses/expected_wrong_response_post_search_url.txt')
 
     with open(input_file) as file:
         result = file.read()
