@@ -21,12 +21,12 @@ class Protection:
         decrypt_file(): decrypt database file and return content
         save_database_dump(database_dump: str): encrypt database dump and save to the file
     """
-    def __init__(self, password: str, database_path: Type[Path]):
+    def __init__(self, password: str, database_path: Path):
         """Construct all the necessary attributes for the protection object.
 
         Args:
             password (str): database password
-            database_path (Type[Path]): database name
+            database_path (Path): database name
         """
         self.password = bytes(password, 'utf-8')
         self.database_path = database_path
@@ -35,7 +35,7 @@ class Protection:
         """Create the key for the encryption.
 
         Returns:
-            object (cryptographt.fernet.Fernet): key for encrypt and decrypt data
+            object (cryptography.fernet.Fernet): key for encrypt and decrypt data
         """
         kdf = PBKDF2HMAC(
             algorithm=hashes.SHA256(),
@@ -48,20 +48,20 @@ class Protection:
         key = Fernet(base64.urlsafe_b64encode(kdf.derive(self.password)))
         return key
 
-    def encrypt(self, data: str) -> str:
+    def encrypt(self, data: bytes) -> bytes:
         """Encrypt and return passed data.
 
         Args:
-            data (str): data to encrypt
+            data (bytes): data to encrypt
 
         Returns:
-            (str): encrypted data
+            (bytes): encrypted data
         """
         key = self.key_creation()
         safe = key.encrypt(data)
         return safe
 
-    def decrypt(self, data: str) -> str:
+    def decrypt(self, data: str) -> bytes:
         """Decrypt and return passed data.
 
         Args:
@@ -89,7 +89,7 @@ class Protection:
 
         return content
 
-    def save_database_dump(self, database_dump: str):
+    def save_database_dump(self, database_dump: bytes):
         """Encrypt and save to the file passed database dump."""
         encrypted_data = self.encrypt(database_dump)
 
