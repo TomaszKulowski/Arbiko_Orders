@@ -111,7 +111,7 @@ def test_load_data_to_database(mock_session, mock_protection, mock_text):
 
     database.load()
 
-    calls = [call(mock_text('scrip1'))]
+    calls = [call(mock_text('script1'))]
     mock_session.assert_has_calls(calls)
     mock_protection.assert_called_once()
     assert mock_session.call_count == 1
