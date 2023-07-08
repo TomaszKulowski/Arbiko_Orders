@@ -2,10 +2,11 @@
 from dataclasses import dataclass
 from datetime import datetime
 from json import load
-from unittest.mock import patch
+from unittest.mock import patch, MagicMock
 from requests import Session
 from pathlib import Path
 
+from pytest import MonkeyPatch, fixture
 import pytest
 import responses
 
@@ -46,7 +47,7 @@ class RequestMock(object):
 
 
 @pytest.fixture()
-def no_requests(monkeypatch):
+def no_requests(monkeypatch: MonkeyPatch):
     """Fixture for patching the 'post' and the 'request' methods of the Session class
         to mock HTTP requests.
 
@@ -58,7 +59,7 @@ def no_requests(monkeypatch):
 
 
 @pytest.fixture(params=['incorrect_password', 'correct_password'], name='arbiko')
-def fixture_arbiko(request):
+def fixture_arbiko(request: fixture):
     """Fixture for creating an instance of Arbiko with different password parameters.
 
     Args:
@@ -70,7 +71,7 @@ def fixture_arbiko(request):
 
 
 @patch('tools.arbiko.Arbiko.login', return_value=True)
-def test_login_if_use_as_context_manager_correct_pass(mock_login, no_requests):
+def test_login_if_use_as_context_manager_correct_pass(mock_login: MagicMock, no_requests: fixture):
     """Test case for succesful login using Arbiko as a context manager
         with the correct password.
 
@@ -85,7 +86,7 @@ def test_login_if_use_as_context_manager_correct_pass(mock_login, no_requests):
 
 
 @patch('tools.arbiko.Arbiko.login', return_value=False)
-def test_login_if_use_as_context_manager_incorrect_pass(mock_login, no_requests):
+def test_login_if_use_as_context_manager_incorrect_pass(mock_login: MagicMock, no_requests: fixture):
     """Test case for handling a failed login using Arbiko as a context manager
         with an incorrect password.
 
@@ -101,7 +102,7 @@ def test_login_if_use_as_context_manager_incorrect_pass(mock_login, no_requests)
     mock_login.assert_called()
 
 
-def test_login(arbiko, no_requests):
+def test_login(arbiko: fixture, no_requests: fixture):
     """Test case for the login method of the Arbiko class.
 
     Args:
@@ -118,7 +119,7 @@ def test_login(arbiko, no_requests):
 
 @responses.activate
 @patch('tools.arbiko.Arbiko.get_oem_number', return_value='12341234')
-def test_parse_server_responses(mock_get_oem_number):
+def test_parse_server_responses(mock_get_oem_number: MagicMock):
     """Test case for parsing responses from the Arbiko server. 
 
     Args:
@@ -158,12 +159,12 @@ def test_parse_server_responses(mock_get_oem_number):
     )
 )
 @responses.activate
-def test_get_oem_number(catalog_number, expected_result, capsys):
+def test_get_oem_number(catalog_number: str, expected_result: str, capsys: fixture):
     """Test case for retrieving the OEM number for a given catalog number.
 
     Args:
         catalog_number (str): the catalog number to retrieving the OEM number for
-        expected_result: the expected OEM number for the given catalog number
+        expected_result (str): the expected OEM number for the given catalog number
         capsys: the built-in pytest fixture for capturing stdout and stderr
     """
     headers = {'set-cookie': 'logged=yes'}
