@@ -35,6 +35,7 @@ class Database:
 
     def __exit__(self, exc_type, exc_val, exc_tb):
         Protection(self.password, self.database_path).save_database_dump(self.dump())
+        self.session.close()
 
     def create_database(self):
         """Create the database if not exists."""
