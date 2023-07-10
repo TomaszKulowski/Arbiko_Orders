@@ -35,12 +35,13 @@ def load_arguments():
     return args
 
 
-def update_data(login: str, password: str, start_date: str = None, end_date: str = None):
+def update_data(login: str, password: str, user_agent: str, start_date: str = None, end_date: str = None):
     """The function to update order history in database.
 
     Args:
         login (str): login to the aribko.pl
         password (str): password to the aribko.pl
+        user_agent (str): user agent
         start_date (str): start date to get order history
         end_date (str): end date to get order history
     """
@@ -96,18 +97,20 @@ def update_data(login: str, password: str, start_date: str = None, end_date: str
         database.session.commit()
 
 
-def refresh_data(login: str, password: str):
+def refresh_data(login: str, password: str, user_agent: str):
     """The function gets the new records from arbiko.pl.
 
     Args:
         login (str): login to the aribko.pl
         password (str): password to the arbiko.pl
+        user_agent (str): user agent
         """
     date_of_last_order = database.session.query(Order).order_by(desc(Order.date)).first()
     if date_of_last_order:
         update_data(
             login=login,
             password=password,
+            user_agent=user_agent,
             start_date=date_of_last_order.date + timedelta(days=1)
         )
     else:
@@ -189,9 +192,9 @@ if __name__ == '__main__':
         settings = yaml.safe_load(file)
 
     database_path = Path(settings['database_path'])
-    login = Path(settings['credentials']['arbiko_login'])
-    arbiko_password = Path(settings['credentials']['arbiko_password'])
-    database_password = Path(settings['credentials']['database_password'])
+    login = settings['credentials']['arbiko_login']
+    arbiko_password = settings['credentials']['arbiko_password']
+    database_password = settings['credentials']['database_password']
     user_agent = UserAgent().chrome
     args = load_arguments()
 
@@ -203,7 +206,7 @@ if __name__ == '__main__':
 
         if args.update:
             try:
-                update_data(login, arbiko_password, args.start_date, args.end_date)
+                update_data(login, arbiko_password, user_agent, args.start_date, args.end_date)
             except ValueError as error:
                 print(error)
             except LoginError as error:
@@ -211,7 +214,7 @@ if __name__ == '__main__':
 
         if args.refresh:
             try:
-                refresh_data(login, database_password)
+                refresh_data(login, database_password, user_agent)
             except DatabaseError as error:
                 print(error)
 
