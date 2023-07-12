@@ -4,26 +4,27 @@ from pathlib import Path
 from unittest.mock import patch, call
 import pytest
 
+import tools.database
 from tools.database import Database
 
 
-@patch('tools.protection.Protection.save_database_dump')
 @patch('tools.database.Database.create_session')
+@patch('tools.database.Database.__exit__')
 def test_create_session_if_use_as_context_manager(
+    mock_exit,
     mock_create_session,
-    mock_protection,
 ):
     """Test that sessions were created when Database is used as a context manager.
 
     Args:
         mock_create_session: mock object for 'tools.protection.Protection.save_database_dump' method
-        mock_protection: mock object for 'tools.database.Database.create_session' method
+        mock_exit: mock object for 'tools.database.Database.__exit__' method
     """
     with Database(Path('database.db'), 'password') as database:
         pass
 
     mock_create_session.assert_called_once()
-    mock_protection.assert_called_once()
+    mock_exit.assert_called_once()
 
 
 @patch('tools.models.Base.metadata.create_all')
