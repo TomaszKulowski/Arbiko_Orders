@@ -4,14 +4,14 @@
 ## Technologies 
 Python 3.11
 
-### Setup
+## Setup
 
 1. Clone repo
 
     ```bash
     git clone https://github.com/Tomasz987/arbiko_orders.git
     ```
-    
+
 2. Install requirements packages
 
     ```bash
@@ -19,7 +19,8 @@ Python 3.11
     ```
 
 3. Fill the credentials for 'arbiko.pl' in the 'settings.yaml' file.
-### Usage
+
+## Usage
 
 ```bash
 usage: main.py [-h] [-r | -u | -s] [-start_date START_DATE] [-end_date END_DATE]
