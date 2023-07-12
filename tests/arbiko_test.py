@@ -23,6 +23,30 @@ class ArbikoUrls:
     search_url: str = 'http://arbiko.pl/arbos/search_of.php3?ref=oferta'
 
 
+class GetOemNumberMock:
+    """Mock 'get_oem_number' method.
+
+    Methods:
+        get_oem_number (*_): mock the 'get_oem_number' method of the 'Arbiko' class
+    """
+    def __init__(self, *args, **kwargs):
+        """Constructor"""
+        self.args = args
+        self.kwargs = kwargs
+        self.generator = None
+
+    def _create_generator(self):
+        """Crate generator with the oem numbers."""
+        for i in self.args:
+            yield i
+
+    def get_oem_number(self, *_):
+        """Mock the 'get_oem_number' method of the 'Arbiko' class."""
+        if self.generator is None:
+            self.generator = self._create_generator()
+        return next(self.generator)
+
+
 class RequestMock(object):
     """Mock request method.
 
@@ -115,22 +139,6 @@ def test_login(arbiko: fixture, no_requests: fixture):
 
     if arbiko.password == 'correct_password':
         assert response is True
-
-
-class GetOemNumberMock:
-    def __init__(self, *args, **kwargs):
-        self.args = args
-        self.kwargs = kwargs
-        self.generator = None
-
-    def _create_generator(self):
-        for i in self.args:
-            yield i
-
-    def get_oem_number(self, *_):
-        if self.generator is None:
-            self.generator = self._create_generator()
-        return next(self.generator)
 
 
 @responses.activate
