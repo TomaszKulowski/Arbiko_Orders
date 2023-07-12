@@ -60,15 +60,13 @@ class Arbiko:
             'passwd': self.password,
             'Submit': 'Loguj >>'
         }
-
         with Session() as self.session:
             self._set_headers()
             self.session.post(self.login_url, data=login_payload)
             if 'logged' in self.session.cookies:
                 if self.session.cookies['logged'] == 'yes':
                     return True
-            else:
-                return False
+            return False
 
     def get_order_history(self, start_date: str, end_date: str) -> dict:
         """The method fetches and return the order history

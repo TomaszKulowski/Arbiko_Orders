@@ -17,11 +17,11 @@ class Database:
          dump(): dump the data from the database and return as bytes
          load(): load the data from the protected file and load it to database
     """
-    def __init__(self, database_path: Type[Path], password: str):
+    def __init__(self, database_path: Path, password: str):
         """Construct all the necessary attributes for the database object.
 
         Args:
-            database_path (Type[Path]): database path
+            database_path (Path): database path
             password (str): database password
         """
         self.database_path = database_path
@@ -35,6 +35,7 @@ class Database:
 
     def __exit__(self, exc_type, exc_val, exc_tb):
         Protection(self.password, self.database_path).save_database_dump(self.dump())
+        self.session.close()
 
     def create_database(self):
         """Create the database if not exists."""
@@ -60,7 +61,7 @@ class Database:
 
     def load(self):
         """Load the data from the protected file and load it to database."""
-        content = Protection(self.database_path).decrypt_file()
+        content = Protection(self.password, self.database_path).decrypt_file()
         scripts = content.split(';')
         for script in scripts:
             self.session.execute(text(script))

@@ -1,0 +1,199 @@
+ <html>
+<head>
+<title>ARBIKO - ZAMÓWIENIE</title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-2">
+
+<link rel="stylesheet" href="styles.css" type="text/css">
+<style>
+<!--
+DIV.men1cl {position:absolute;   width:700px; height:90px; z-index:2; left: 5px; top: 100px;  visibility:visible}
+DIV.men2cl {position:absolute; width:700px; height:72px; z-index:3; left:5px; top: 100px;  visibility:hidden}
+DIV.men3cl {position:absolute; width:700px; height:90px; z-index:3; left: 5px; top: 100px;  visibility:hidden}
+//-->
+</style>
+<script>
+<!--
+function OpenNewWindow(Url, nazwa, wys, szer) {
+   window.open(Url, nazwa, "height=" + wys + ",width=" + szer + ",status=no,scrollbars=yes,menubar=no,location=no");
+}
+function checkIt(e) {
+        var charCode = (navigator.appName == "Netscape") ? e.which : e.keyCode;
+        status = charCode
+        if (charCode > 31 && (charCode<48 || charCode > 57)) {
+                alert ("Proszê wpisywaæ jedynie cyfry.")
+                return false
+        }
+        return true
+}
+
+function AskErase(url) {
+        ret = confirm("Zamówienie zostanie usuniete. Kontynuowaæ?");
+        if (ret) {
+                location.href=url;
+        } else {
+                alert("Rezygnacja z zamówienia anulowana!");
+        }
+}
+//-->
+</script>
+
+<SCRIPT LANGUAGE="JavaScript">
+<!--
+
+
+function Is() {
+        var agent = navigator.userAgent.toLowerCase();
+        this.major = parseInt(navigator.appVersion);
+        this.minor = parseFloat(navigator.appVersion);
+        this.ns  = ((agent.indexOf('mozilla')!=-1) && ((agent.indexOf('spoofer')==-1) && (agent.indexOf('compatible') == -1)));
+        this.ns2 = (this.ns && (this.major == 2));
+        this.ns3 = (this.ns && (this.major == 3));
+        this.ns4 = (this.ns && (this.major >= 4));
+        this.ie   = (agent.indexOf("msie") != -1);
+        this.ie3  = (this.ie && (this.major == 2));
+        this.ie4  = (this.ie && (this.major >= 4));
+        this.op3 = (agent.indexOf("opera") != -1);
+}
+
+var is = new Is()
+
+
+if(is.ns4) {
+        doc = "document.";
+        sty = "";
+        htm = ".document"
+
+} else if(is.ie4) {
+        doc = "document.all.";
+        sty = ".style";
+        htm = ""
+}
+
+
+
+
+timers=new Array(100);
+for(i=0;i<100;++i) timers[i]=0;
+
+ function divStyle(theDiv)
+{
+if (document.getElementById) return document.getElementById(theDiv).style;
+return eval("document."+((document.all)?"all."+theDiv+".style":theDiv));
+}
+function showDiv(thisDiv)
+{
+if (document.getElementById) node=document.getElementById(thisDiv).style.visibility='visible';
+else divStyle(thisDiv).visibility = "visible"
+}
+function hideDiv(thisDiv)
+{
+if (document.getElementById) node = document.getElementById(thisDiv).style.visibility='hidden';
+else divStyle(thisDiv).visibility=(document.all)?"hidden":"hide";
+}
+
+
+
+
+function showla(l) {
+
+     hideDiv('men'+1);
+  hideDiv('men'+2);
+  hideDiv('men'+3);
+showDiv('men'+l);
+
+}
+
+
+
+
+
+
+//-->
+</script>
+</head>
+
+<body bgcolor="#FFFFFF" text="#000000" leftmargin="0" topmargin="0" marginwidth="0" marginheight="0">
+<br>
+<p>Dziêkujemy za z³o¿one zamówienie!<br>Poni¿ej zamieszczamy pe³ne dane Twojego zamówienia.</p><p class=margin><b>Nr Twojego zamówienia: 215044</b><br><b>Status tego zamówienia:</b> zrealizowane</p><div id="men1" class=men1cl>      
+<table width="95%" border="0" cellspacing="0" cellpadding="0">
+  <tr>
+    <td width="5%">&nbsp;</td>
+    <td width="30%" bgcolor="#003366" class="tdnagl"><a href="javascript:showla(1);" class=al>Pozycje
+      zamówienia</a></td>
+    <td width="1" bgcolor="#FFFFFF"><img src=images/divdr.gif width=1 height=10></td>
+    <td width="30%" bgcolor="#3C70A5" class="tdnagl"><a href="javascript:showla(2);" class=al>Korespondencja</a></td>
+     <td width="1" bgcolor="#FFFFFF"><img src=images/divdr.gif width=1 height=10></td>
+    <td width="30%" bgcolor="#3C70A5" class="tdnagl"><a href="javascript:showla(3);" class=al>Dane
+      odbiorcy i wysy³ki</a></td>
+    <td width="5%">&nbsp;</td>
+  </tr>
+</table>
+<table width="95%" border="0" cellpadding="3" cellspacing="1" bgcolor="#003366">
+  <tr>
+    <td height=300 bgcolor="#FFFFFF" valign=top><br>
+
+
+
+
+<table width=95% border=0 align=center cellpadding=3 cellspacing=1 bgcolor=#fafafa><tbody  bgcolor=#eeeeee><tr bgcolor=#cccccc class=dane><td><b>Lp.</b></td><td><b>Nr katalogowy</b></td><td><b>Nazwa</b></td><td align=right><nobr><b>
+Cena netto</b></nobr></td><td align=right><b>Ilo¶æ</b></td><td><b>JM</b></td><td><nobr><b>Warto¶æ netto</b></nobr></td><td><nobr><b>Warto¶æ brutto</b></nobr></td><td></td></tr><tr bgcolor=#eeeeee><td class="dane">1</td><td class="da
+ne">4459 4875</td><td class="dane">Beben CN iR2230 </td><td align=right class="dane"><nobr>44,54 PLN</nobr></td><td class="dane" align=right>1</td><td class="dane"></td><td align=right class="dane
+"><nobr>44,54 PLN</nobr></td><td align=right class="dane"><nobr>54,78 PLN</nobr></td></tr><tr bgcolor=#fafafa><td class="dane">2</td><td class="dane">4440 6696</td><td class="dane">Rolka HP LJ P3005N</td><td align=right class="dane"><nobr>12,97 PLN</nobr></td><td class="dane" align=right>1</td><td class="dane">szt.</td><td align=right class="dane"><nobr>12,97 PLN</nobr></td><td align=right class="dane"><nobr>15,95 PLN</nobr></
+td><td><img src=images/koszyk.gif  alt="Dodaj do bie¿±cego zamówienia" class=handy border=0 align=absmiddle  onClick="location.href='add2basket_fz.php3?id=7410';"></td></tr><tr bgcolor=#eeeeee><td class="dane">3</td><td class="dane"
+>4440 3689</td><td class="dane">Rolka HP LJ P2035 </td><td align=right class="dane"><nobr>9,38 PLN</nobr></td><td class="dane" align=right>1</td><td class="dane">szt.</td><td align=rig
+ht class="dane"><nobr>9,38 PLN</nobr></td><td align=right class="dane"><nobr>11,54 PLN</nobr></td><td><img src=images/koszyk.gif  alt="Dodaj do bie¿±cego zamówienia" class=handy border=0 align=absmiddle  onClick="location.href='add2
+basket_fz.php3?id=6567';"></td></tr><tr bgcolor=#dddddd><td colspan=6 class="dane"><b>KOSZTY PRZESY£KI I POBRANIA (OPCJA)</b></td><td align=right class="dane"><nobr>14,00 PLN</nobr></td><td align=right class="dane"><nobr>17,22 PLN</
+nobr></td></td colspan=2><td></tr><tr bgcolor=#dddddd><td colspan=6 class="dane"><b>PRZEWO¬NIK</b></td><td align=right class="dane"><nobr>GLS</nobr></td><td colspan=2></td></tr><tr bgcolor=#dddddd><td colspan=6 class="dane"><b>NUMER
+ LISTU PRZEWOZOWEGO</b></td><td align=right class="dane"><nobr>1111c</nobr></td><td colspan=2></td></tr><tr bgcolor=#dddddd><td colspan=6 class="dane"><b>DATA WYSY£KI</b></td><td align=right class="dane"><nobr>2014-03-24</nobr
+></td><td colspan=2></td></tr><tr bgcolor=#dddddd><td colspan=6 class="dane"><b>SPOSÓB P£ATNO¦CI</b></td><td align=right class="dane"><nobr>przelew 7 dni</nobr></td><td colspan=2></td></tr><tr bgcolor=#cccccc><td colspan=6  class="d
+ane"><b>RAZEM</b></td><td align=right class="dane"><nobr>80,89 PLN</nobr></td><td align=right class="dane"><nobr>99,49 PLN</nobr></td></td><td></tr></tbody></table></td>
+  </tr>
+</table>
+</div>
+<div id="men3" class=men3cl>
+<table width="95%" border="0" cellspacing="0" cellpadding="0">
+  <tr>
+    <td width="5%">&nbsp;</td>
+    <td width="30%" bgcolor="#3C70A5" class="tdnagl"><a href="javascript:showla(1);" class=al>Pozycje
+      zamówienia</a></td>
+    <td width="1" bgcolor="#FFFFFF"><img src=images/divdr.gif width=1 height=10></td>
+    <td width="30%" bgcolor="#3C70A5" class="tdnagl"><a href="javascript:showla(2);" class=al>Korespondencja</a></td>
+     <td width="1" bgcolor="#FFFFFF"><img src=images/divdr.gif width=1 height=10></td>
+    <td width="30%" bgcolor="#003366" class="tdnagl"><a href="javascript:showla(3);" class=al>Dane
+      odbiorcy i wysy³ki</a></td>
+    <td width="5%">&nbsp;</td>
+  </tr>
+</table>
+<table width="95%" border="0" cellpadding="3" cellspacing="1" bgcolor="#003366">
+  <tr>
+    <td height="300" bgcolor="#FFFFFF" valign=top><br>
+
+<p><b>Odbiorca:</b></p><p>FIRMA<br>adres<br>11-111, miasti<br><p><b>Adres wysy³ki:</b></p><p><br><p><b>Uwagi klienta:</b></p><p><br></td>
+  </tr>
+</table>
+</div>
+<div id="men2" class=men2cl>
+<table width="95%" border="0" cellspacing="0" cellpadding="0">
+  <tr>
+    <td width="5%">&nbsp;</td>
+    <td width="30%" bgcolor="#3C70A5" class="tdnagl"><a href="javascript:showla(1);" class=al>Pozycje
+      zamówienia</a></td>
+    <td width="1" bgcolor="#FFFFFF"><img src=images/divdr.gif width=1 height=10></td>
+    <td width="30%" bgcolor="#003366" class="tdnagl"><a href="javascript:showla(2);" class=al>Korespondencja</a></td>
+     <td width="1" bgcolor="#FFFFFF"><img src=images/divdr.gif width=1 height=10></td>
+    <td width="30%" bgcolor="#3C70A5" class="tdnagl"><a href="javascript:showla(3);" class=al>Dane
+      odbiorcy i wysy³ki</a></td>
+    <td width="5%">&nbsp;</td>
+  </tr>
+</table>
+<table width="95%" border="0" cellpadding="3" cellspacing="1" bgcolor="#003366">
+  <tr>
+    <td height="300" bgcolor="#FFFFFF" valign=top><br>
+
+        </td>
+  </tr>
+</table>
+</div>
+
+</body>
+</html>
