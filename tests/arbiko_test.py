@@ -117,10 +117,29 @@ def test_login(arbiko: fixture, no_requests: fixture):
         assert response is True
 
 
+class GetOemNumberMock:
+    def __init__(self, *args, **kwargs):
+        self.args = args
+        self.kwargs = kwargs
+        self.generator = None
+
+    def _create_generator(self):
+        for i in self.args:
+            yield i
+
+    def get_oem_number(self, *_):
+        if self.generator is None:
+            self.generator = self._create_generator()
+        return next(self.generator)
+
+
 @responses.activate
-@patch('tools.arbiko.Arbiko.get_oem_number', return_value='12341234')
+@patch(
+    'tools.arbiko.Arbiko.get_oem_number',
+    side_effect=GetOemNumberMock('12341234', 'abc123as', '00qwerty').get_oem_number
+)
 def test_parse_server_responses(mock_get_oem_number: MagicMock):
-    """Test case for parsing responses from the Arbiko server. 
+    """Test case for parsing responses from the Arbiko server.
 
     Args:
         mock_get_oem_number: the patched 'get_oem_number' method of the Arbiko class
