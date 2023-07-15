@@ -1,6 +1,8 @@
 # General info
 'Arbiko Orders' is an app for easy browsing orders from the arbiko.pl shop.
 
+This app scrapes the information about orders from arbiko.pl shop and saves it to the protected SQLite database.
+
 ## Technologies 
 Python 3.11
 
