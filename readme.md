@@ -11,7 +11,7 @@ Python 3.11
 1. Clone repo
 
     ```bash
-    git clone https://github.com/Tomasz987/arbiko_orders.git
+    git clone https://github.com/TomaszKulowski/arbiko_orders.git
     ```
 
 2. Install requirements packages
