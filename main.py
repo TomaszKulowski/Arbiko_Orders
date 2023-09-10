@@ -2,13 +2,14 @@
 import argparse
 from datetime import date, timedelta, datetime
 from pathlib import Path
+from os import getenv
 import re
 
 from fake_useragent import UserAgent
 from rich.console import Console
 from rich.table import Table
 from sqlalchemy import desc
-import yaml
+from dotenv import load_dotenv
 
 from tools.arbiko import Arbiko
 from tools.database import Database
@@ -200,13 +201,12 @@ def draw_table(records: list):
 
 
 if __name__ == '__main__':
-    with open('settings.yaml') as file:
-        settings = yaml.safe_load(file)
+    load_dotenv()
 
-    database_path = Path(settings['database_path'])
-    login = settings['credentials']['arbiko_login']
-    arbiko_password = settings['credentials']['arbiko_password']
-    database_password = settings['credentials']['database_password']
+    database_path = getenv('DATABASE_PATH')
+    login = getenv('ARBIKO_LOGIN')
+    arbiko_password = getenv('ARBIKO_PASSWORD')
+    database_password = getenv('DATABASE_PASSWORD')
     user_agent = UserAgent().chrome
     args = load_arguments()
 
@@ -233,6 +233,6 @@ if __name__ == '__main__':
         if args.search:
             try:
                 while True:
-                    draw_table(search())
+                    draw_table(search(database))
             except ExitException:
                 pass

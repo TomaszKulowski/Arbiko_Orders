@@ -1,6 +1,0 @@
-credentials: 
-  arbiko_login: 'login'
-  arbiko_password: 'password'
-  database_password: 'password'
-
-database_path: db.db
