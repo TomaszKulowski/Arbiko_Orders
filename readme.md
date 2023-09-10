@@ -20,7 +20,7 @@ Python 3.11
     pip install -r requirements.txt
     ```
 
-3. Fill the credentials for 'arbiko.pl' in the 'settings.yaml' file.
+3. Fill the credentials for the 'arbiko.pl' and the database in the '.env' file.
 
 ## Usage
 
